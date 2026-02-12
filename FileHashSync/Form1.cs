@@ -44,27 +44,24 @@ namespace FileHashSync
                 prgBar.Value = 0;
             });
 
-            var files = FileScanner.Scan(selectedPath);
-            int total = files.Count;
-
-            for (int i = 0; i < total; i++)
-            {
-                var f = files[i];
-
-                var item = new ListViewItem(f.RelativePath);
-                item.SubItems.Add(f.Hash);
-                item.SubItems.Add("");
-                item.Tag = f.FullPath;
-
-                listViewFiles.Invoke(() =>
+            FileScanner.Scan(selectedPath,
+                (processed, total, fullPath, relativePath, hash) =>
                 {
-                    listViewFiles.Items.Add(item);
-                    prgBar.Value = (i + 1) * 100 / total;
+                    var item = new ListViewItem(relativePath);
+                    item.SubItems.Add(hash);
+                    item.SubItems.Add("");
+                    item.Tag = fullPath;
+
+                    listViewFiles.Invoke(() =>
+                    {
+                        listViewFiles.Items.Add(item);
+                        prgBar.Value = processed * 100 / total;
+                    });
                 });
-            }
 
             IsCompared = false;
         }
+
 
         private void exportCsvBtn_Click(object sender, EventArgs e)
         {

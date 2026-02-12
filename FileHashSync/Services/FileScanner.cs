@@ -1,25 +1,36 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace FileHashSync.Services
 {
     public class FileScanner
     {
-        public static List<(string FullPath, string RelativePath, string Hash)> Scan(string basePath)
+        public static void Scan(
+            string basePath,
+            Action<int, int, string, string, string> onFileProcessed
+        )
         {
-            var result = new List<(string, string, string)>();
+            var files = Directory
+                .EnumerateFiles(basePath, "*.*", SearchOption.AllDirectories)
+                .ToList();
 
-            var files = Directory.EnumerateFiles(basePath, "*.*", SearchOption.AllDirectories);
+            int total = files.Count;
 
-            foreach (var fullPath in files)
+            for (int i = 0; i < total; i++)
             {
+                string fullPath = files[i];
                 string relativePath = Path.GetRelativePath(basePath, fullPath);
                 string hash = HashHelper.CalculateMD5(fullPath);
 
-                result.Add((fullPath, relativePath, hash));
+                onFileProcessed?.Invoke(
+                    i + 1,            // processed
+                    total,            // total
+                    fullPath,
+                    relativePath,
+                    hash
+                );
             }
-
-            return result;
         }
     }
 }
