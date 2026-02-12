@@ -5,7 +5,13 @@ FileHashSync is a lightweight Windows application for **scanning folders, calcul
 It helps you detect modified, missing, or new files and export only the files that have changed.
 
 ---
+## Screenshots
 
+![FileHashSync – Directory Scan](./screenshot.png)
+
+![FileHashSync – CSV Comparison](./screenshot2.png)
+
+---
 ## Features
 
 - Recursively scan directories
